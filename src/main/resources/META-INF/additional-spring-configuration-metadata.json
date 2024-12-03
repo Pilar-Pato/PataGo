@@ -10,18 +10,13 @@
     "description": "A description for 'spring.app.jwtExpirationMs'"
   },
   {
-    "name": "spring.app.jwtSecret",
+    "name": "spring.app.jwt.secret",
     "type": "java.lang.String",
-    "description": "A description for 'spring.app.jwtSecret'"
+    "description": "A description for 'spring.app.jwt.secret'"
   },
   {
-    "name": "spring.app.jwtExpirationMs",
+    "name": "spring.app.jwt.expirationMs",
     "type": "java.lang.String",
-    "description": "A description for 'spring.app.jwtExpirationMs'"
-  },
-  {
-    "name": "spring.app.jwtSecret",
-    "type": "java.lang.String",
-    "description": "A description for 'spring.app.jwtSecret'"
+    "description": "A description for 'spring.app.jwt.expirationMs'"
   }
 ]}
