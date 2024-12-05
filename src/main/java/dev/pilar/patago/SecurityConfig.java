@@ -1,100 +1,61 @@
 package dev.pilar.patago;
 
-import javax.sql.DataSource;
-
+import dev.pilar.patago.jwt.AuthEntryPointJwt;
+import dev.pilar.patago.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import dev.pilar.patago.jwt.AuthEntryPointJwt;
-import dev.pilar.patago.jwt.AuthTokenFilter;
-
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
-    @Autowired
-    DataSource dataSource;
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
+    @Autowired
+    private AuthTokenFilter authTokenFilter;
 
-    private static final String[] WhiteList = {
-                        "**/auth/**",
-                        "**/dogs/**",
-                        "**/reservation/**"
+    private static final String[] WHITELIST = {
+            "/auth/**"  // Rutas públicas (login, registro, etc.)
     };
+
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests.requestMatchers(WhiteList).permitAll()
-                        .requestMatchers("**/user/**").hasRole("USER")
-                        .requestMatchers("**/admin/**").hasRole("ADMIN").anyRequest().authenticated());
-        
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        
-        http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
-        
-        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
-        
-        http.csrf(csrf -> csrf.disable());
-        
-        http.addFilterBefore(authenticationJwtTokenFilter(),
-                UsernamePasswordAuthenticationFilter.class);
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // Usamos Lambda DSL en Spring Security 6.x
+        http
+            .csrf(csrf -> csrf.disable()) // Desactivamos CSRF ya que no lo necesitamos con JWT
+            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                .requestMatchers(WHITELIST).permitAll() // Rutas públicas para autenticación
+                .anyRequest().authenticated() // Todas las demás rutas requieren autenticación
+            )
+            .exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint(unauthorizedHandler) // Manejo de excepciones de autenticación
+            )
+            .sessionManagement(sessionManagement -> sessionManagement
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Usamos JWT, no mantenemos sesión
+            );
+
+        // Agregar el filtro para verificar el JWT antes de cada solicitud
+        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager(); // Devuelve el AuthenticationManager
     }
 
     @Bean
-    public CommandLineRunner initData(UserDetailsService userDetailsService) {
-        return args -> {
-            UserDetails user1 = User.withEmail("user@email.com")
-                    .password(passwordEncoder().encode("1234"))
-                    .roles("USER")
-                    .build();
-            UserDetails admin = User.withEmail("admin@email.com")
-                    .password(passwordEncoder().encode("1234"))
-                    .roles("ADMIN")
-                    .build();
-
-            JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
-            userDetailsManager.createUser(user1);
-            userDetailsManager.createUser(admin);
-        };
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(); // Utilizamos BCrypt para codificar las contraseñas
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
-        return builder.getAuthenticationManager();
-    }
-
 }
