@@ -38,7 +38,7 @@ public class AuthTokenController {
         authenticationManager.authenticate(authenticationToken);
 
         // Si la autenticación es exitosa, se obtiene el usuario
-        UserDetails userDetails = userRepository.findByUsername(username); // Asumiendo que tienes este método en UserRepository
+        UserDetails userDetails = (UserDetails) authenticationToken.getPrincipal(); // Asumiendo que tienes este método en UserRepository
 
         // Generar el JWT
         String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
