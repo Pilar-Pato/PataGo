@@ -10,8 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -24,6 +28,6 @@ public class CustomUserDetailsService implements org.springframework.security.co
         }
 
         // Devolvemos un CustomUserDetails que envuelve el User
-        return new CustomUserDetails(user);  // Usamos CustomUserDetails para envolver el objeto User
+        return new CustomUserDetails(user);
     }
 }
