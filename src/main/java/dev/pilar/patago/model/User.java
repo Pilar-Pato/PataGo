@@ -47,39 +47,39 @@ public class User implements UserDetails {
         // Convertir roles en autoridades para usar en la autenticación
         Set<GrantedAuthority> authorities = new HashSet<>();
         for (Role role : roles) {
-            authorities.add(() -> role.getName());  // Asumiendo que role.getName() devuelve "ROLE_USER" o "ROLE_ADMIN"
+            authorities.add(() -> "ROLE_" + role.getName());  // Agregar "ROLE_" como prefijo
         }
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return this.password;  // Se hereda de UserDetails, así que no necesitas definirlo aquí.
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return this.username;  // Se hereda de UserDetails, así que no necesitas definirlo aquí.
+        return this.username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;  // Puedes ajustarlo según tus necesidades
+        return true;  // Se puede personalizar si es necesario
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;  // Puedes ajustarlo según tus necesidades
+        return true;  // Se puede personalizar si es necesario
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;  // Puedes ajustarlo según tus necesidades
+        return true;  // Se puede personalizar si es necesario
     }
 
     @Override
     public boolean isEnabled() {
-        return true;  // Puedes ajustarlo según tus necesidades
+        return true;  // Se puede personalizar si es necesario
     }
 
     // Getters y setters adicionales
@@ -92,12 +92,9 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-
     public void setUsername(String username) {
         this.username = username;
     }
-
-   
 
     public void setPassword(String password) {
         this.password = password;
@@ -133,5 +130,9 @@ public class User implements UserDetails {
 
     public void setDogs(List<Dog> dogs) {
         this.dogs = dogs;
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
     }
 }

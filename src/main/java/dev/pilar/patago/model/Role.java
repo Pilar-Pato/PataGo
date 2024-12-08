@@ -42,4 +42,9 @@ public class Role {
     public void setName(String name) {
         this.name = name;
     }
+    // Método toString (opcional, útil para depuración)
+    @Override
+    public String toString() {
+        return "Role{id=" + id + ", name='" + name + "'}";
+    }
 }

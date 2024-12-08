@@ -5,15 +5,15 @@ import dev.pilar.patago.model.User;
 import dev.pilar.patago.repository.RoleRepository;
 import dev.pilar.patago.repository.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.List;
+import java.util.Optional;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -24,27 +24,74 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void createUser() {
-        // Crear roles
+    // Crear un nuevo usuario con roles
+    public User createUser(User user) {
+        // Encriptar la contraseña antes de guardarla
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Asignar rol USER al nuevo usuario
         Role userRole = roleRepository.findByName("ROLE_USER");
         if (userRole == null) {
-            userRole = new Role();
-            userRole.setName("ROLE_USER");
+            userRole = new Role("ROLE_USER");
             roleRepository.save(userRole);
         }
 
-        // Crear un nuevo usuario
-        User user = new User();
-        user.setUsername("Pilar_pato");  // Nombre de usuario
-        user.setPassword(passwordEncoder.encode("1234"));  // Contraseña encriptada
-        user.setName("Pilar Pato");  // Nombre completo
-        user.setEmail("pilar.pato@example.com");  // Correo electrónico
-        
-        // Asignar roles al usuario
-        Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
-        user.setRoles(roles);
+        // Asignar el rol al usuario
+        user.addRole(userRole);
 
-        userRepository.save(user);
+        // Guardar el usuario en la base de datos
+        return userRepository.save(user);
     }
+
+    // Crear un nuevo usuario admin con roles
+    public User createAdminUser(User user) {
+        // Encriptar la contraseña antes de guardarla
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Asignar rol ADMIN al nuevo usuario
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
+        if (adminRole == null) {
+            adminRole = new Role("ROLE_ADMIN");
+            roleRepository.save(adminRole);
+        }
+
+        // Asignar el rol ADMIN al usuario
+        user.addRole(adminRole);
+
+        // Guardar el usuario en la base de datos
+        return userRepository.save(user);
+    }
+
+    // Implementar la carga de detalles de usuario (para autenticación)
+    @Override
+    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException("Usuario no encontrado: " + username));
+
+        // Devolver los detalles del usuario con roles
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getRoles().stream().map(role -> role.getName()).toArray(String[]::new))
+                .build();
+    }
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // Método para obtener un usuario por su ID
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    // Método para guardar o actualizar un usuario
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    // Método para eliminar un usuario por su ID
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
 }

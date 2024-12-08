@@ -1,10 +1,12 @@
 package dev.pilar.patago.repository;
 
 import dev.pilar.patago.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsername(String username);
+    boolean existsByUsername(String username);
+    Optional<User> findByUsername(String username); //
 }
