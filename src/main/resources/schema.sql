@@ -1,4 +1,4 @@
--- Crear tabla de roles
+/* -- Crear tabla de roles
 CREATE TABLE IF NOT EXISTS roles (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE
@@ -45,3 +45,4 @@ CREATE TABLE IF NOT EXISTS reservations (
     FOREIGN KEY (dog_id) REFERENCES dogs(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+ */

@@ -27,8 +27,20 @@ public class Reservation {
     @Column(nullable = false)
     private String status;
 
-    // Getters and setters
+        
+    public Reservation() {
+    }
 
+    // Constructor con todos los parámetros
+    public Reservation(Dog dog, User user, LocalDateTime startDate, LocalDateTime endDate, String status) {
+        this.dog = dog;
+        this.user = user;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+    }
+
+    // Getters and setters
     public Long getId() {
         return id;
     }

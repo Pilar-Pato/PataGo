@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/reservations")
@@ -23,22 +23,24 @@ public class ReservationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Reservation> getReservationById(@PathVariable Long id) {
-        Optional<Reservation> reservation = reservationService.getReservationById(id);
-        return reservation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return reservationService.getReservationById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Reservation createReservation(@RequestBody Reservation reservation) {
-        return reservationService.saveReservation(reservation);
+    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
+        return ResponseEntity.ok(reservationService.saveReservation(reservation));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody Reservation reservation) {
-        if (reservationService.getReservationById(id).isPresent()) {
-            reservation.setId(id);
-            return ResponseEntity.ok(reservationService.saveReservation(reservation));
-        }
-        return ResponseEntity.notFound().build();
+        return reservationService.getReservationById(id)
+                .map(existingReservation -> {
+                    reservation.setId(id);
+                    return ResponseEntity.ok(reservationService.saveReservation(reservation));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

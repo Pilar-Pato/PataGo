@@ -52,6 +52,9 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    public User() {
+    }
+
     @Override
     public String getPassword() {
         return this.password;

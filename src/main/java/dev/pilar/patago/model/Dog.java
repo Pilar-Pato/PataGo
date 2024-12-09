@@ -28,6 +28,19 @@ public class Dog {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    
+    public Dog() {
+    }
+
+    public Dog(String name, String breed, int age, String size, String temperament, User owner) {
+        this.name = name;
+        this.breed = breed;
+        this.age = age;
+        this.size = size;
+        this.temperament = temperament;
+        this.owner = owner;
+    }
+
     // Getters and setters
 
     public Long getId() {
