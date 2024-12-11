@@ -6,15 +6,19 @@ import dev.pilar.patago.repository.RoleRepository;
 import dev.pilar.patago.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.util.List;
-
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -28,116 +32,121 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    private User testUser;
+    private Role testRole;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        testRole = new Role("USER");
+        testRole.setId(1L);
+        testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testuser");
+        testUser.setPassword("password");
+        testUser.setName("Test User");
+        testUser.setEmail("test@example.com");
+        testUser.addRole(testRole);
     }
 
     @Test
-    void testCreateUser_CreatesUserSuccessfully() {
-        // Crear datos de prueba para el usuario y rol
-        User user = new User();  // Usamos el constructor por defecto
-        user.setUsername("john_doe");
-        user.setPassword("password123");
-        user.setName("John");
-        user.setEmail("john@example.com");
+    void createUser() {
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(roleRepository.findByName("USER")).thenReturn(testRole);
+        when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-        Role role = new Role("USER");
+        User result = userService.createUser(testUser, "USER");
 
-        // Simular comportamiento de las dependencias
-        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
-        when(roleRepository.findByName("USER")).thenReturn(role);
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        // Ejecutar el método que se va a probar
-        User createdUser = userService.createUser(user, "USER");
-
-        // Verificaciones
-        assertNotNull(createdUser);
-        assertEquals("john_doe", createdUser.getUsername());
-        assertEquals("encodedPassword", createdUser.getPassword());
-        assertTrue(createdUser.getRoles().contains(role));
-
-        // Verificar que las dependencias fueron llamadas correctamente
-        verify(passwordEncoder, times(1)).encode("password123");
-        verify(roleRepository, times(1)).findByName("USER");
-        verify(userRepository, times(1)).save(user);
+        assertNotNull(result);
+        assertEquals("encodedPassword", result.getPassword());
+        assertTrue(result.getRoles().contains(testRole));
+        verify(userRepository).save(testUser);
     }
 
     @Test
-    void testGetAllUsers_ReturnsListOfUsers() {
-        // Crear usuarios de prueba
-        User user1 = new User();
-        user1.setUsername("john_doe");
-        user1.setPassword("password123");
-        user1.setName("John");
-        user1.setEmail("john@example.com");
+    void createUser_NewRole() {
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(roleRepository.findByName("NEW_ROLE")).thenReturn(null);
+        when(roleRepository.save(any(Role.class))).thenReturn(new Role("NEW_ROLE"));
+        when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-        User user2 = new User();
-        user2.setUsername("jane_doe");
-        user2.setPassword("password456");
-        user2.setName("Jane");
-        user2.setEmail("jane@example.com");
+        User result = userService.createUser(testUser, "NEW_ROLE");
 
-        // Simulamos la respuesta del repositorio
-        when(userRepository.findAll()).thenReturn(List.of(user1, user2));
+        assertNotNull(result);
+        assertEquals("encodedPassword", result.getPassword());
+        verify(roleRepository).save(any(Role.class));
+        verify(userRepository).save(testUser);
+    }
 
-        // Ejecutar el método
-        List<User> users = userService.getAllUsers();
+    @Test
+    void loadUserByUsername() {
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
 
-        // Verificaciones
-        assertNotNull(users);
-        assertEquals(2, users.size());
-        assertTrue(users.contains(user1));
-        assertTrue(users.contains(user2));
+        UserDetails userDetails = userService.loadUserByUsername("testuser");
 
-        // Verificar que se llamó al repositorio
+        assertNotNull(userDetails);
+        assertEquals("testuser", userDetails.getUsername());
+        assertEquals(1, userDetails.getAuthorities().size());
+        assertTrue(userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
+    }
+
+    @Test
+    void loadUserByUsername_UserNotFound() {
+        when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class, () -> {
+            userService.loadUserByUsername("nonexistent");
+        });
+    }
+
+    @Test
+    void getAllUsers() {
+        List<User> users = Arrays.asList(testUser);
+        when(userRepository.findAll()).thenReturn(users);
+
+        List<User> result = userService.getAllUsers();
+
+        assertEquals(1, result.size());
+        assertEquals(testUser, result.get(0));
         verify(userRepository, times(1)).findAll();
     }
 
     @Test
-    void testGetUserById_ReturnsUser() {
-        // Crear usuario de prueba
-        User user = new User();
-        user.setUsername("john_doe");
-        user.setPassword("password123");
-        user.setName("John");
-        user.setEmail("john@example.com");
+    void getUserById_ExistingUser() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
-        // Simulamos la respuesta del repositorio
-        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(user));
+        Optional<User> result = userService.getUserById(1L);
 
-        // Ejecutar el método
-        User foundUser = userService.getUserById(1L).orElse(null);
-
-        // Verificaciones
-        assertNotNull(foundUser);
-        assertEquals("john_doe", foundUser.getUsername());
-        assertEquals("password123", foundUser.getPassword());
-        assertEquals("John", foundUser.getName());
-        assertEquals("john@example.com", foundUser.getEmail());
-
-        // Verificar que se llamó al repositorio
+        assertTrue(result.isPresent());
+        assertEquals(testUser, result.get());
         verify(userRepository, times(1)).findById(1L);
     }
 
     @Test
-    void testDeleteUser_DeletesUserSuccessfully() {
-        // Crear usuario de prueba
-        User user = new User();
-        user.setUsername("john_doe");
-        user.setPassword("password123");
-        user.setName("John");
-        user.setEmail("john@example.com");
+    void getUserById_NonExistingUser() {
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
-        // Simulamos que el repositorio lo encuentra y elimina correctamente
-        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(user));
-        doNothing().when(userRepository).deleteById(1L);
+        Optional<User> result = userService.getUserById(2L);
 
-        // Ejecutar el método
+        assertFalse(result.isPresent());
+        verify(userRepository, times(1)).findById(2L);
+    }
+
+    @Test
+    void saveUser() {
+        when(userRepository.save(any(User.class))).thenReturn(testUser);
+
+        User result = userService.saveUser(testUser);
+
+        assertEquals(testUser, result);
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    void deleteUser() {
         userService.deleteUser(1L);
 
-        // Verificar que el repositorio fue llamado con el id correcto
         verify(userRepository, times(1)).deleteById(1L);
     }
 }
