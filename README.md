@@ -41,6 +41,8 @@ En futuras actualizaciones, PataGo! incluirá nuevas funcionalidades que ampliar
 
 - **Calendario de disponibilidad**: Muy pronto podrás gestionar la disponibilidad de tu perro (si eres dueño) o ver la disponibilidad de los perros para compartir. ¡Será más fácil que nunca coordinar y reservar!
 
+-  **Fotos de los perros**: Los usuarios podrán ver fotos de los perros disponibles para compañía, lo que facilitará elegir al compañero ideal para cada ocasión.
+
   ## 🛠️ Tecnologías implementadas
 
 - **Java**
