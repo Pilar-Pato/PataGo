@@ -68,7 +68,7 @@ En futuras actualizaciones, PataGo! incluirá nuevas funcionalidades que ampliar
 ## 📊 Enlaces a diagramas y presentación
 
 - **Diagrama de entidades relacionales**: [Ver diagrama ER]([[[enlace-al-diagrama-ER](https://drive.google.com/file/d/1JqeQc4Xjo0deJPGZOduraONN_jGnxNEq/view?usp=sharing)]
-- **Diagrama ULM**: [Ver diagrama ULM](enlace-al-diagrama-ULM)
-- **Presentación de Canva**: [Ver presentación](enlace-a-la-presentación-canva)
+- **Diagrama ULM**: [Ver diagrama ULM](https://drive.google.com/file/d/1JqeQc4Xjo0deJPGZOduraONN_jGnxNEq/view?usp=sharing)
+- **Presentación de Canva**: [Ver presentación](https://www.canva.com/design/DAGXhbxAo78/h3Bel1OztzkxjXwqb9u7xw/edit?utm_content=DAGXhbxAo78&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 
