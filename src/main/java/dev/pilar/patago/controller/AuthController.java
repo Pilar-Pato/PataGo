@@ -22,7 +22,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-        // Encriptar la contraseña antes de guardar
+        
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 

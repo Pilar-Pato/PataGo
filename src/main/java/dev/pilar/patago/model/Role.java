@@ -2,7 +2,6 @@ package dev.pilar.patago.model;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -18,15 +17,15 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
 
-    // Constructor sin argumentos
+    
     public Role() {}
 
-    // Constructor con nombre
+    
     public Role(String name) {
         this.name = name;
     }
 
-    // Getters y setters
+    
     public Long getId() {
         return id;
     }
@@ -42,7 +41,7 @@ public class Role {
     public void setName(String name) {
         this.name = name;
     }
-    // Método toString (opcional, útil para depuración)
+    
     @Override
     public String toString() {
         return "Role{id=" + id + ", name='" + name + "'}";

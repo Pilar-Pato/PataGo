@@ -38,7 +38,7 @@ public class RoleControllerTest {
         testRole = new Role("ADMIN");
     }
 
-    // Test para obtener todos los roles
+    
     @Test
     void testGetAllRoles() throws Exception {
         when(roleService.getAllRoles()).thenReturn(List.of(testRole));
@@ -50,7 +50,7 @@ public class RoleControllerTest {
         verify(roleService, times(1)).getAllRoles();
     }
 
-    // Test para obtener un rol por ID
+   
     @Test
     void testGetRoleById() throws Exception {
         when(roleService.getRoleById(1L)).thenReturn(Optional.of(testRole));
@@ -62,7 +62,7 @@ public class RoleControllerTest {
         verify(roleService, times(1)).getRoleById(1L);
     }
 
-    // Test para obtener un rol por ID que no existe
+    
     @Test
     void testGetRoleById_NotFound() throws Exception {
         when(roleService.getRoleById(1L)).thenReturn(Optional.empty());
@@ -73,7 +73,7 @@ public class RoleControllerTest {
         verify(roleService, times(1)).getRoleById(1L);
     }
 
-    // Test para crear un nuevo rol
+    
     @Test
     void testCreateRole() throws Exception {
         when(roleService.saveRole(any(Role.class))).thenReturn(testRole);
@@ -81,7 +81,7 @@ public class RoleControllerTest {
         mockMvc.perform(post("/roles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"ADMIN\"}"))
-                .andExpect(status().isOk())  // Cambia a 200 OK
+                .andExpect(status().isOk())  
                 .andExpect(jsonPath("$.name").value("ADMIN"));
     
         verify(roleService, times(1)).saveRole(any(Role.class));
@@ -90,7 +90,7 @@ public class RoleControllerTest {
 
 
    
-    // Test para actualizar un rol que no existe
+    
     @Test
     void testUpdateRole_NotFound() throws Exception {
         when(roleService.getRoleById(1L)).thenReturn(Optional.empty());
@@ -104,7 +104,7 @@ public class RoleControllerTest {
         verify(roleService, times(0)).saveRole(any(Role.class));
     }
 
-    // Test para eliminar un rol
+    
     @Test
     void testDeleteRole() throws Exception {
         doNothing().when(roleService).deleteRole(1L);

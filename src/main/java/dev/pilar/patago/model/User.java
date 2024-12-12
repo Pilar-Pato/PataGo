@@ -40,14 +40,14 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Dog> dogs;
 
-    // Implementar los métodos de UserDetails
+    
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Convertir roles en autoridades para usar en la autenticación
+        
         Set<GrantedAuthority> authorities = new HashSet<>();
         for (Role role : roles) {
-            authorities.add(() -> "ROLE_" + role.getName());  // Agregar "ROLE_" como prefijo
+            authorities.add(() -> "ROLE_" + role.getName());  
         }
         return authorities;
     }
@@ -67,25 +67,25 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;  // Se puede personalizar si es necesario
+        return true;  
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;  // Se puede personalizar si es necesario
+        return true;  
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;  // Se puede personalizar si es necesario
+        return true;  
     }
 
     @Override
     public boolean isEnabled() {
-        return true;  // Se puede personalizar si es necesario
+        return true;  
     }
 
-    // Getters y setters adicionales
+    
 
     public Long getId() {
         return id;

@@ -40,16 +40,16 @@ public class DataInitializer implements CommandLineRunner {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void run(String... args) throws Exception {
         try {
-            // 1. Crear roles si no existen
+            
             createRoles();
 
-            // 2. Crear usuarios si no existen
+            
             createUsers();
 
-            // 3. Crear perros si no existen
-            createDogs();  // Aquí llamamos a createDogs()
+            
+            createDogs();  
 
-            // 4. Crear reservas para los perros si no existen
+            
             createReservations();
 
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private void createRoles() {
         try {
-            // Crear rol 'USER' si no existe
+            
             Role userRole = roleRepository.findByName("USER");
             if (userRole == null) {
                 userRole = new Role("USER");
@@ -68,7 +68,7 @@ public class DataInitializer implements CommandLineRunner {
                 System.out.println("Rol 'USER' creado.");
             }
 
-            // Crear rol 'ADMIN' si no existe
+            
             Role adminRole = roleRepository.findByName("ADMIN");
             if (adminRole == null) {
                 adminRole = new Role("ADMIN");
@@ -81,32 +81,32 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void createUsers() {
-        // Crear usuario 'root' con rol 'ADMIN'
+        
         if (!userRepository.existsByUsername("root")) {
             User root = new User();
             root.setUsername("root");
             root.setPassword(passwordEncoder.encode("1234"));
             root.setName("Super Admin");
             root.setEmail("root@example.com");
-            root.addRole(roleRepository.findByName("ADMIN"));  // Usar "ADMIN" en vez de "ROLE_ADMIN"
+            root.addRole(roleRepository.findByName("ADMIN"));  
             userRepository.save(root);
         }
 
-        // Crear usuario 'user' con rol 'USER'
+        
         if (!userRepository.existsByUsername("user")) {
             User user = new User();
             user.setUsername("user");
             user.setPassword(passwordEncoder.encode("1234"));
             user.setName("User Example");
             user.setEmail("user@example.com");
-            user.addRole(roleRepository.findByName("USER"));  // Usar "USER" en vez de "ROLE_USER"
+            user.addRole(roleRepository.findByName("USER"));  
             userRepository.save(user);
         }
     }
 
     private void createDogs() {
         try {
-            // Crear perro 'Labrador' si no existe
+            
             if (!dogRepository.existsByName("Labrador")) {
                 User user = userRepository.findByUsername("user").orElse(null);
                 if (user != null) {
@@ -122,7 +122,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private void createReservations() {
         try {
-            // Crear reserva para 'Labrador' de 'user'
+            
             if (!reservationRepository.existsByDogNameAndUserUsername("Labrador", "user")) {
                 Dog labrador = dogRepository.findByName("Labrador").orElse(null);
                 User user = userRepository.findByUsername("user").orElse(null);

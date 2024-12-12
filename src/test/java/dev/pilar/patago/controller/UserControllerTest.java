@@ -63,91 +63,91 @@ public class UserControllerTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testGetAllUsers() throws Exception {
-        // Configura el comportamiento del servicio
+        
         when(userService.getAllUsers()).thenReturn(List.of(testUser));
 
-        // Realiza la petición GET y verifica el resultado
+        
         mockMvc.perform(get("/users"))
-                .andExpect(status().isOk())  // Esperamos un 200 OK
+                .andExpect(status().isOk())  
                 .andExpect(jsonPath("$[0].username").value("john.doe"));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testGetUserById_Found() throws Exception {
-        // Configura el comportamiento del servicio
+        
         when(userService.getUserById(anyLong())).thenReturn(Optional.of(testUser));
 
-        // Realiza la petición GET con un ID válido
+        
         mockMvc.perform(get("/users/{id}", 1L))
-                .andExpect(status().isOk())  // Esperamos un 200 OK
+                .andExpect(status().isOk())  
                 .andExpect(jsonPath("$.username").value("john.doe"));
     }
 
     @Test
 void testGetUserById_NotFound() throws Exception {
-    // Configura el comportamiento del servicio
+    
     when(userService.getUserById(anyLong())).thenReturn(Optional.empty());
 
-    // Realiza la petición GET con un ID no encontrado
+    
     mockMvc.perform(get("/users/{id}", 1L))
             .andExpect(status().isNonAuthoritativeInformation())  
-            .andExpect(jsonPath("$.username").value(""))  // Verificamos que el usuario esté vacío (si es un usuario vacío)
-            .andExpect(jsonPath("$.email").value(""))  // Verificamos otros campos del usuario vacío
-            .andExpect(jsonPath("$.name").value(""))  // Verificamos otros campos del usuario vacío
-            .andExpect(jsonPath("$.id").value(0));  // Verificamos el ID vacío (por ejemplo, 0 si no existe)
+            .andExpect(jsonPath("$.username").value(""))  
+            .andExpect(jsonPath("$.email").value(""))  
+            .andExpect(jsonPath("$.name").value(""))  
+            .andExpect(jsonPath("$.id").value(0));  
 }
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testCreateUser() throws Exception {
-        // Configura el comportamiento del servicio
+        
         when(userService.saveUser(any(User.class))).thenReturn(testUser);
 
-        // Realiza la petición POST para crear un usuario
+        
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"username\": \"john.doe\", \"password\": \"password123\", \"name\": \"John Doe\", \"email\": \"john.doe@example.com\"}"))
-                .andExpect(status().isOk())  // Ahora debería devolver un 200 OK
+                .andExpect(status().isOk())  
                 .andExpect(jsonPath("$.username").value("john.doe"));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testUpdateUser_Found() throws Exception {
-        // Configura el comportamiento del servicio
+        
         when(userService.getUserById(anyLong())).thenReturn(Optional.of(testUser));
         when(userService.saveUser(any(User.class))).thenReturn(testUser);
 
-        // Realiza la petición PUT para actualizar un usuario
+        
         mockMvc.perform(put("/users/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"username\": \"john.doe\", \"password\": \"newpassword\", \"name\": \"John Doe\", \"email\": \"john.doe@example.com\"}"))
-                .andExpect(status().isOk())  // Esperamos un 200 OK
+                .andExpect(status().isOk())  
                 .andExpect(jsonPath("$.username").value("john.doe"));
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testUpdateUser_NotFound() throws Exception {
-        // Configura el comportamiento del servicio
+        
         when(userService.getUserById(anyLong())).thenReturn(Optional.empty());
 
-        // Realiza la petición PUT con un ID no encontrado
+        
         mockMvc.perform(put("/users/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"username\": \"john.doe\", \"password\": \"newpassword\", \"name\": \"John Doe\", \"email\": \"john.doe@example.com\"}"))
-                .andExpect(status().isNotFound());  // Esperamos un 404 Not Found
+                .andExpect(status().isNotFound());  
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testDeleteUser() throws Exception {
-        // Configura el comportamiento del servicio
+        
         doNothing().when(userService).deleteUser(anyLong());
 
-        // Realiza la petición DELETE para eliminar un usuario
+        
         mockMvc.perform(delete("/users/{id}", 1L))
-                .andExpect(status().isNoContent());  // Ahora debería devolver un 204 No Content
+                .andExpect(status().isNoContent());  
     }
 
     }

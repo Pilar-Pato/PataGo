@@ -31,7 +31,7 @@ public class Reservation {
     public Reservation() {
     }
 
-    // Constructor con todos los parámetros
+    
     public Reservation(Dog dog, User user, LocalDateTime startDate, LocalDateTime endDate, String status) {
         this.dog = dog;
         this.user = user;
@@ -40,7 +40,7 @@ public class Reservation {
         this.status = status;
     }
 
-    // Getters and setters
+    
     public Long getId() {
         return id;
     }

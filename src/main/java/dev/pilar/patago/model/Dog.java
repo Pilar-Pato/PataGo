@@ -41,7 +41,7 @@ public class Dog {
         this.owner = owner;
     }
 
-    // Getters and setters
+    
 
     public Long getId() {
         return id;

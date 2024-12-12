@@ -13,6 +13,6 @@ public class PatagoApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Este espacio está vacío porque la inicialización de datos se maneja en otro lugar (DataInitializer)
+        
     }
 }

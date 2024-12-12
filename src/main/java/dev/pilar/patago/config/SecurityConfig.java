@@ -17,18 +17,18 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Utiliza BCrypt para cifrado de contraseñas
+        return new BCryptPasswordEncoder(); 
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // Desactiva CSRF (para API REST)
+        http.csrf(csrf -> csrf.disable()) 
             .authorizeHttpRequests(request -> 
                 request.requestMatchers("/auth/register").permitAll() 
-                       .requestMatchers("/api/admin/**").hasRole("ADMIN") // Solo acceso a ADMIN
-                       .requestMatchers("/api/user/**").hasRole("USER") // Solo acceso a USER
-                       .anyRequest().authenticated()) // Requiere autenticación para el resto
-            .httpBasic(Customizer.withDefaults()); // Usa autenticación básica
+                       .requestMatchers("/api/admin/**").hasRole("ADMIN") 
+                       .requestMatchers("/api/user/**").hasRole("USER") 
+                       .anyRequest().authenticated()) 
+            .httpBasic(Customizer.withDefaults()); 
 
         return http.build();
     }
@@ -37,11 +37,11 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.inMemoryAuthentication()
-            .withUser("root") // Usuario root con rol de ADMIN
+            .withUser("root") 
             .password(passwordEncoder().encode("1234"))
             .roles("ADMIN")
             .and()
-            .withUser("user") // Usuario user con rol de USER
+            .withUser("user") 
             .password(passwordEncoder().encode("1234"))
             .roles("USER");
 
