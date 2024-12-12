@@ -4,7 +4,7 @@ PataGo!
 
 ## 🚀 ¿Qué es PataGo!?
 
-PataGo! es una aplicación móvil innovadora que permite que los amantes de los perros encuentren la compañía canina perfecta de manera rápida y sencilla. Ya sea que estés buscando un perro para acompañarte en tus paseos, entrenamientos o simplemente para hacerle compañía durante un rato, nuestra plataforma conecta a personas con dueños responsables de mascotas que desean compartir su compañero canino. Además, ofrecemos opciones para asegurar la tranquilidad de todos los usuarios con seguros opcionales y pagos seguros.
+PataGo! es una aplicación innovadora que permite que los amantes de los perros encuentren la compañía canina perfecta de manera rápida y sencilla. Ya sea que estés buscando un perro para acompañarte en tus paseos, entrenamientos o simplemente para hacerle compañía durante un rato, nuestra plataforma conecta a personas con dueños responsables de mascotas que desean compartir su compañero canino. Además, ofrecemos opciones para asegurar la tranquilidad de todos los usuarios con seguros opcionales y pagos seguros.
 
 ## 🎯 Objetivos principales
 
